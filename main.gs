@@ -1,4 +1,4 @@
-const CHANNEL_ACCESS_TOKEN = 'aEXNw8CeJz0UgV0LB3NtmFaM6m9GVEcYLnvP5Jj1FOomxLtOrZryca2KeLnoqD2J4mHiZphopquqHbj5mruJv4bxku0z4V4OxMhQd6jhfeWtSqCLjpNn8/NK96FzJKP7PNImBHm/Nn8vSN7IdbjfqwdB04t89/1O/w1cDnyilFU=';
+const CHANNEL_ACCESS_TOKEN = 'KjfpEWZUjJfHTMzQMUBmkJ/nIrVFCOCi1NnZKZ4YuOzKGa/IkX/9TK/IyaHEuTDdaJ/zIhyT0kWLvBdHBoGdC/q9azEs6PcaJuPIxYk0YQL1u7vW+dyBd0DFnuf6dnR1KCbIVaXIFKJJcNmmhyjkKQdB04t89/1O/w1cDnyilFU=';
 const dateExp = /^1?\d\/[123]\d$/;
 
 function doPost(e){
