@@ -73,14 +73,15 @@ function doPost(e) {
 
       // 誕生日の削除処理
       case '3':
-      // deleteBirthday();
-        reply(replyToken, '誕生日を削除しました');
+        // deleteBirthday(postMsg);
+        reply(replyToken, 'reached');
         cache.remove('type');
         break;
     }
   }
 }
 
+// 誕生日の追加
 function addBirthday(name, date) {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
   sheet.appendRow([
@@ -88,6 +89,28 @@ function addBirthday(name, date) {
     date,
   ]);
 };
+
+// 名前がスプレッドシート内にあるか検索する
+function checkName(name) {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  const data = sheet.getDataRange().getValues();
+  const columnIndex = 0;
+  const dataRows = convertTwoDimensionToOneDimension(data, columnIndex);
+  let matchIndex = null;
+
+  dataRows.forEach((value, index) => {
+    if(name === value) {
+      matchIndex = index;
+    }
+    return matchIndex;
+  });
+
+  return matchIndex;
+}
+
+// 誕生日の削除
+// function deleteBirthday(name) {
+// }
   
 
 function reply(replyToken, message) {
