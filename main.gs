@@ -1,96 +1,97 @@
 const CHANNEL_ACCESS_TOKEN = 'KjfpEWZUjJfHTMzQMUBmkJ/nIrVFCOCi1NnZKZ4YuOzKGa/IkX/9TK/IyaHEuTDdaJ/zIhyT0kWLvBdHBoGdC/q9azEs6PcaJuPIxYk0YQL1u7vW+dyBd0DFnuf6dnR1KCbIVaXIFKJJcNmmhyjkKQdB04t89/1O/w1cDnyilFU=';
+const URL = 'https://api.line.me/v2/bot/message/reply';
 const dateExp = /^1?\d\/[123]\d$/;
 
-function doPost(e){
-  getMessage(e);
-};
+//doPost関数（Lineからメッセージを受け取る）
+function doPost(e) {
+  //メッセージ受信
+  const data = JSON.parse(e.postData.contents).events[0];
+  //ユーザーID取得
+  const lineUserId = data.source.userId;
+  //リプレイトークン取得
+  const replyToken= data.replyToken;
+  //送信されたメッセージ取得
+  const postMsg = data.message.text;
+  //順番待ちがあるかの確認
+  // const UserData = findUser(lineUserId);
 
-function getMessage(e) {
-    const replyToken= JSON.parse(e.postData.contents).events[0].replyToken;
+  // リプライトークンが無かったら処理を止める
+  if(typeof replyToken === 'undefined') {
+    return;
+  }
 
-    if (typeof replyToken === 'undefined') {
+  // キャッシュを設定
+  const cache = CacheService.getScriptCache();
+  let type = cache.get("type");
+
+  if(type === null) {
+    if(postMsg === '誕生日の追加') {
+      cache.put('type', 1);
+      reply(replyToken, '追加する人の名前を入力してください');
+    } else if(postMsg === '誕生日の削除'){
+      cache.put('type', 3);
+      reply(replyToken, '削除する人の名前を入力してください')
+    } else if(postMsg === '誕生日の一覧'){
+      // showBirthdaysList();
+      reply(replyToken, '誕生日の一覧です');
+    } else {
+      reply(replyToken, '「誕生日の追加」、「誕生日の削除」、「誕生日の一覧」のいずれかを入力してください');
+    }
+  } else {
+    // 処理途中で追加のキャンセル
+    if(postMsg === 'キャンセル') {
+      cache.remove('type');
+      reply(replyToken, '誕生日の追加をキャンセルしました');
       return;
     }
 
-  let messageText = JSON.parse(e.postData.contents).events[0].message.text;
-  const birthdays = {};
-  const cache = CacheService.getScriptCache();
-  let flow = cache.get("flow");
+    switch(type) {
 
-  if(flow === null) {
-      if(messageText === '誕生日の追加') {
-          cache.put("flow", 1);
-          reply(replyToken, "追加する人を入力して下さい\n 追加をキャンセルする場合は途中で「キャンセル」と入力して下さい");
-      } else if(messageText === '誕生日の削除') {
-          cache.put("flow", 3);
-          let list;
-          while(birthdays.name) {
-              list += birthdays.name + "\n";
-          };
-          reply(replyToken, "削除する人の誕生日を以下から選んでください \n" + list);
-      } else {
-          reply(replyToken, "「誕生日の追加」で誕生日を追加します \n 「誕生日の削除」で誕生日を削除します。");
-      }
-  } else {
-      if(messageText === 'キャンセル') {
-          cache.remove("flow");
-          reply(replyToken, '誕生日の追加をキャンセルしました。');
-          return;
-      }
+      // 誕生日の追加処理
+      case '1':
+        cache.put('type', 2);
+        cache.put('name', postMsg);
+        reply(replyToken, '追加する誕生日を「12/20」の形式で入力してください');
+        break;
+      case '2':
+        if(postMsg.match(dateExp)) {
+          cache.put('date', postMsg);
+          // addBirthday(cache.get('name'), cache.get('date'));
+          reply(replyToken, `${cache.get('name')}さんの誕生日を${cache.get('date')}で登録しました`);
+          cache.remove('type');
+          cache.remove('name');
+          cache.remove('date');
+          break;
+        } else {
+          reply(replyToken, '正しく入力してください。「キャンセル」で処理を中止します');
+          break;
+        }
 
-      switch(flow) {
-        case "1":
-            cache.put("flow", 2);
-            // 一旦、キャッシュに入れておいて日付が決まったら一辺にオブジェクトへ格納する
-            cache.put("name", messageText);
-            // birthdays.name = messageText;
-            reply(replyToken, "追加する誕生日を入力して下さい\n 12/20の形式で入力してください");
-            break;
-        case "2":
-            if(messageText.match(dateExp)) {
-                cache.remove("flow");
-                cache.put("date", messageText);
-                // birthdays.date = messageText;
-                reply(replyToken, '誕生日が追加されました');
-                break;
-            } else {
-                reply(replyToken, '正しい形式で入力してください');
-                break;
-            }
-        case "3":
-            cache.remove("flow");
-            if(checkDelete(messageText)) {
-                delete birthdays.messageText;
-            } else {
-                reply(replyToken, "見つかりませんでした \n 最初からやり直してください");
-                cache.remove("flow");
-            }
-            reply(replyToken, "削除しました。");
-            break;
-      }
+      // 誕生日の削除処理
+      case '3':
+      // deleteBirthday();
+        reply(replyToken, '誕生日を削除しました');
+        cache.remove('type');
+        break;
+    }
   }
-
 }
-
-function checkDelete(text, obj) {
-    return obj.hasOwnProperty(text);
-}
+  
 
 function reply(replyToken, message) {
-    const url = 'https://api.line.me/v2/bot/message/reply';
-    UrlFetchApp.fetch(url, {
-        'headers': {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': 'Bearer ' + CHANNEL_ACCESS_TOKEN,
-        },
-        'method': 'post',
-        'payload': JSON.stringify({
-            'replyToken': replyToken,
-            'messages': [{
-            'type': 'text',
-            'text': message,
-            }],
-        }),
-    });
-    return ContentService.createTextOutput(JSON.stringify({'content': 'post ok'})).setMimeType(ContentService.MimeType.JSON);
+  UrlFetchApp.fetch(URL, {
+    'headers': {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer ' + CHANNEL_ACCESS_TOKEN,
+    },
+    'method': 'post',
+    'payload': JSON.stringify({
+      'replyToken': replyToken,
+      'messages': [{
+        'type': 'text',
+        'text': message,
+      }],
+    }),
+  });
+  return ContentService.createTextOutput(JSON.stringify({'content': 'post ok'})).setMimeType(ContentService.MimeType.JSON);
 }
