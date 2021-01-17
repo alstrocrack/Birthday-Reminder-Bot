@@ -1,5 +1,9 @@
 const CHANNEL_ACCESS_TOKEN = 'KjfpEWZUjJfHTMzQMUBmkJ/nIrVFCOCi1NnZKZ4YuOzKGa/IkX/9TK/IyaHEuTDdaJ/zIhyT0kWLvBdHBoGdC/q9azEs6PcaJuPIxYk0YQL1u7vW+dyBd0DFnuf6dnR1KCbIVaXIFKJJcNmmhyjkKQdB04t89/1O/w1cDnyilFU=';
 const URL = 'https://api.line.me/v2/bot/message/reply';
+const SHEET_ID = '1QR-HT2L1RQenVHeR4y1V9cJm7q18nOQqwSZPtDi3UKY';
+const SHEET_NAME = 'birthdays';
+const SPREAD = SpreadsheetApp.getActiveSpreadsheet();
+const SHEET = SPREAD.getSheets()[0];
 const dateExp = /^1?\d\/[123]\d$/;
 
 //doPost関数（Lineからメッセージを受け取る）
@@ -56,7 +60,7 @@ function doPost(e) {
       case '2':
         if(postMsg.match(dateExp)) {
           cache.put('date', postMsg);
-          // addBirthday(cache.get('name'), cache.get('date'));
+          addBirthday(cache.get('name'), cache.get('date'));
           reply(replyToken, `${cache.get('name')}さんの誕生日を${cache.get('date')}で登録しました`);
           cache.remove('type');
           cache.remove('name');
@@ -76,6 +80,14 @@ function doPost(e) {
     }
   }
 }
+
+function addBirthday(name, date) {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  sheet.appendRow([
+    name, 
+    date,
+  ]);
+};
   
 
 function reply(replyToken, message) {
