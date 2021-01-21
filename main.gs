@@ -73,11 +73,16 @@ function doPost(e) {
 
       // 誕生日の削除処理
       case '3':
-        // deleteBirthday(postMsg);
-        // reply(replyToken, 'reached');
-        reply(replyToken, checkName(postMsg));
-        cache.remove('type');
-        break;
+        if(checkName(postMsg) !== -1) {
+          deleteBirthday(checkName(postMsg));
+          reply(replyToken, `${postMsg}さんの誕生日を削除しました`);
+          cache.remove('type');
+          break;
+        } else {
+          reply(replyToken, `${postMsg}さんの誕生はありませんでした`);
+          cache.remove('type');
+          break;
+        }
     }
   }
 }
@@ -96,6 +101,7 @@ function checkName(name) {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
   const values = sheet.getDataRange().getValues();
   const nameList = [];
+  // 初期値に-1を入れておく、-1がそのまま返ってきたら該当するユーザーはいなかったよいうこと
   let nameIndex = -1;
 
   // nameListに全ての名前を入れていく
@@ -114,7 +120,11 @@ function checkName(name) {
 
   return nameIndex;
 }
-  
+
+function deleteBirthday(rowNumber) {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  sheet.deleteRows(rowNumber + 1);
+}
 
 function reply(replyToken, message) {
   UrlFetchApp.fetch(URL, {
