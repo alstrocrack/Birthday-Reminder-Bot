@@ -36,8 +36,7 @@ function doPost(e) {
       cache.put('type', 3);
       reply(replyToken, '削除する人の名前を入力してください')
     } else if(postMsg === '誕生日の一覧'){
-      // showBirthdaysList();
-      reply(replyToken, '誕生日の一覧です');
+      reply(replyToken, showBirthdaysList());
     } else {
       reply(replyToken, '「誕生日の追加」、「誕生日の削除」、「誕生日の一覧」のいずれかを入力してください');
     }
@@ -96,7 +95,7 @@ function addBirthday(name, date) {
   ]);
 };
 
-// 名前がスプレッドシート内にあるか検索する
+// 誕生日の検索
 function checkName(name) {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
   const values = sheet.getDataRange().getValues();
@@ -121,9 +120,31 @@ function checkName(name) {
   return nameIndex;
 }
 
+// 誕生日の削除
 function deleteBirthday(rowNumber) {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
   sheet.deleteRows(rowNumber + 1);
+}
+
+// 誕生日の一覧
+function showBirthdaysList() {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  const values = sheet.getDataRange().getValues();
+
+  // 連想配列から扱いやすい形に変換
+  const dataList = values.map( row => {
+    return {
+      name: row[0],
+      date: row[1]
+    };
+  });
+
+  // 返信用のフォーマットに変換する
+  const adjustList = dataList.reduce((list, curr) => {
+    return `${list}\n${curr.name} : ${curr.date}`
+  },'');
+
+  return adjustList;
 }
 
 function reply(replyToken, message) {
