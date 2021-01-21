@@ -46,7 +46,11 @@ function doPost(e) {
 
 //ユーザー検索
 function findUser(uid) {
-    return getUserData().reduce(function(uuid, row) { return uuid || (row.key === uid && row.value); }, false) || undefined;
+    return getUserData().reduce(
+        function(uuid, row) { 
+            return uuid || (row.key === uid && row.value); 
+        }, false) 
+    || undefined;
 }
 //ユーザー検索
 function getUserData() {
