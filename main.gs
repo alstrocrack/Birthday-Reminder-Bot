@@ -74,7 +74,8 @@ function doPost(e) {
       // 誕生日の削除処理
       case '3':
         // deleteBirthday(postMsg);
-        reply(replyToken, 'reached');
+        // reply(replyToken, 'reached');
+        reply(replyToken, checkName(postMsg));
         cache.remove('type');
         break;
     }
@@ -93,24 +94,26 @@ function addBirthday(name, date) {
 // 名前がスプレッドシート内にあるか検索する
 function checkName(name) {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
-  const data = sheet.getDataRange().getValues();
-  const columnIndex = 0;
-  const dataRows = convertTwoDimensionToOneDimension(data, columnIndex);
-  let matchIndex = null;
+  const values = sheet.getDataRange().getValues();
+  const nameList = [];
+  let nameIndex = -1;
 
-  dataRows.forEach((value, index) => {
-    if(name === value) {
-      matchIndex = index;
+  // nameListに全ての名前を入れていく
+  for(let i = 0; i < values.length; i++) {
+    nameList.push(values[i][0]);
+  }
+  
+// 　一つずつnameとマッチするか確かめていく
+  nameList.forEach((e, i )=> {
+    if(e == name) {
+      nameIndex = i;
+      return;
     }
-    return matchIndex;
+    return;
   });
 
-  return matchIndex;
+  return nameIndex;
 }
-
-// 誕生日の削除
-// function deleteBirthday(name) {
-// }
   
 
 function reply(replyToken, message) {
