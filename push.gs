@@ -1,70 +1,60 @@
-const to = 'Uad6b8ca26735335be5479d95638f38ba';
+/////////////////// 送信先のuserID/////////////////
+////////////（ここで入力したIDに送信されます)//////////
 
-const ACCESS_TOKEN = 'KjfpEWZUjJfHTMzQMUBmkJ/nIrVFCOCi1NnZKZ4YuOzKGa/IkX/9TK/IyaHEuTDdaJ/zIhyT0kWLvBdHBoGdC/q9azEs6PcaJuPIxYk0YQL1u7vW+dyBd0DFnuf6dnR1KCbIVaXIFKJJcNmmhyjkKQdB04t89/1O/w1cDnyilFU=';
-// const SHEET_ID = '1QR-HT2L1RQenVHeR4y1V9cJm7q18nOQqwSZPtDi3UKY'
-// const SHEET_NAME = 'birthdays';
+var to = "U5a257a207126e910d9b304f2314ea4fc";
 
+///////////////////////////////////////////////////
+///////////////////////////////////////////////////
+
+//アクセストークン
+var ACCESS_TOKEN = "KjfpEWZUjJfHTMzQMUBmkJ/nIrVFCOCi1NnZKZ4YuOzKGa/IkX/9TK/IyaHEuTDdaJ/zIhyT0kWLvBdHBoGdC/q9azEs6PcaJuPIxYk0YQL1u7vW+dyBd0DFnuf6dnR1KCbIVaXIFKJJcNmmhyjkKQdB04t89/1O/w1cDnyilFU=";
+//スプレッドシート情報
+var ID = '1UvfoXcokXfyeaZIKC8nLTkrTqFeZbS555jIOZWEhKuU';
+var NAME = 'data';
+
+//送信先の処理
 function pushMessage() {
-  // const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
-  // const data = sheet.getDataRange().getValues();
 
-  // const date = new Date().toLocaleDateString();
+//送信したユーザー先のユーザーを検索
+    var sheet = SpreadsheetApp.openById(ID).getSheetByName(NAME);
+    var textFinder = sheet.createTextFinder(to);
+    var ranges = textFinder.findAll();
 
-  // const adjustedDate = date.slice(5);
+    if(ranges[0]){
+        //送信完了時メッセージ（デバック記録用）
+        // debug('送信完了しました。',to);
+    }else{
+        //送信済みメッセージ（デバック記録用）
+        // debug('すでに送信済みです',to);
+    }
 
-  // if(checkBirthdays(adjustedDate) !== -1) {
-  //   return push(checkBirthdays(adjustedDate));
-  // }
-  push();
+    //送信ユーザーを順番待ちから削除
+    // sheet.deleteRows(ranges[0].getRow());
+
+    //メッセージ送信処理
+    return push();
+
 }
 
-// function checkBirthdays(birthday) {
-//   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
-//   const values = sheet.getDataRange().getValues();
-//   const birthdaysList = [];
+//FlexMessageの作成
+function push() {
 
-//   // 初期値に-1を入れておく、-1がそのまま返ってきたら該当するユーザーはいなかったよいうこと
-//   let birthdayIndex = -1;
-
-//   // birthdaysListに全ての名前を入れていく
-//   for(let i = 0; i < values.length; i++) {
-//     birthdaysList.push(values[i][1]);
-//   }
-  
-//   // 　一つずつnameとマッチするか確かめていく
-//   birthdaysList.forEach((e, i )=> {
-//     if(e == birthday) {
-//       birthdayIndex = i;
-//       return;
-//     }
-//     return;
-//   });
-
-//   // 誕生日に該当する人の名前を返す
-//   return values[birthdayIndex][0];
-// }
-
-// pushメッセージの送信
-function push(){
-  var postData = {
-    "to": to,
-    "messages": [{
-      "type": "text",
-      "text": 'HELLO',
-    }]
-  };
-
-  var url = "https://api.line.me/v2/bot/message/push";
-  var headers = {
-    "Content-Type": "application/json",
-    'Authorization': 'Bearer ' + CHANNEL_ACCESS_TOKEN,
-  };
-
-  var options = {
-    "method": "post",
-    "headers": headers,
-    "payload": JSON.stringify(postData),
-    "muteHttpExceptions" : true,
-  };
-  var response = UrlFetchApp.fetch(url, options);
+    var url = "https://api.line.me/v2/bot/message/push";
+    var headers = {
+    "Content-Type" : "application/json; charset=UTF-8",
+    'Authorization': 'Bearer ' + ACCESS_TOKEN,
+    };
+    var postData = {
+    "to" : to,
+    "messages" : [{
+      'type' : 'text',
+      'text' : 'HELLO'
+    }],
+    };
+    var options = {
+    "method" : "post",
+    "headers" : headers,
+    "payload" : JSON.stringify(postData)
+    };
+    return UrlFetchApp.fetch(url, options);
 }
