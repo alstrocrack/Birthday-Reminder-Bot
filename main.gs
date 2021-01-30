@@ -5,6 +5,7 @@ const SHEET_ID = '1QR-HT2L1RQenVHeR4y1V9cJm7q18nOQqwSZPtDi3UKY';
 const SHEET_NAME = 'birthdays';
 const SPREAD = SpreadsheetApp.getActiveSpreadsheet();
 const SHEET = SPREAD.getSheets()[0];
+// 誕生年があるものとないもの
 const dateExp = /1?\d\/[123]?\d/;
 const dateExpYear = /[19|20]\d{2}\/1?\d\/[123]?\d/;
 
@@ -28,6 +29,7 @@ function doPost(e) {
   const cache = CacheService.getScriptCache();
   let type = cache.get("type");
 
+  // 処理を分ける
   if(type === null) {
     if(postMsg === '誕生日の追加') {
       cache.put('type', 1);
@@ -49,7 +51,6 @@ function doPost(e) {
     }
 
     switch(type) {
-
       // 誕生日の追加処理
       case '1':
         cache.put('type', 2);
@@ -124,7 +125,7 @@ function checkName(name) {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
   const values = sheet.getDataRange().getValues();
   const nameList = [];
-  // 初期値に-1を入れておく、-1がそのまま返ってきたら該当するユーザーはいなかったよいうこと
+  // 初期値に-1を入れておく、-1がそのまま返ってきたら該当するユーザーはいなかったということ
   let nameIndex = -1;
 
   // nameListに全ての名前を入れていく
@@ -132,7 +133,7 @@ function checkName(name) {
     nameList.push(values[i][0]);
   }
   
-// 　一つずつnameとマッチするか確かめていく
+  // 一つずつnameとマッチするか確かめていく
   nameList.forEach((e, i )=> {
     if(e == name) {
       nameIndex = i;

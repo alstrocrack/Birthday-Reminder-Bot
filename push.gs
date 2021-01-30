@@ -12,10 +12,9 @@ function pushMessage() {
     // return;
   }
 
-  const year = new Date().getFullYear();
-
   const person = sheet.getRange(index + 1, 1).getValue();
   const to = sheet.getRange(index + 1, 5).getValue();
+  const year = new Date().getFullYear();
   let theYear = sheet.getRange(index + 1, 2).getValue();
   let message = "今日は";
   let age;
@@ -35,19 +34,21 @@ function findUser() {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
   const values = sheet.getDataRange().getValues();
 
+  // 比較するときの様式を合わせる
   const birthdaysList = values.map( row => {
     return `${row[2]}/${row[3]}`;
   });
-  
+
+  // 比較するときの様式を合わせる
   const today = new Date();
   const month = today.getMonth();
   const date = today.getDate();
-
   const theDay = `${month + 1}/${date}`;
 
   // 記述方法がこれでないと動かないっぽい
   const BirthdayIndex = birthdaysList.findIndex((el) => el == theDay　);
 
+  // デバッグ用
   // const BirthdayIndex = birthdaysList.reduce((accu, curr) => {
   //   return `${accu}\n${curr}`;
   // }, theDay);
@@ -55,7 +56,7 @@ function findUser() {
   return BirthdayIndex;
 }
 
-//FlexMessageの作成
+//PushMessageの作成
 function push(message, to) {
 
     var url = "https://api.line.me/v2/bot/message/push";
