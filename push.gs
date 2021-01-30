@@ -14,30 +14,48 @@ var NAME = 'data';
 
 //送信先の処理
 function pushMessage() {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  const index = findUser();
 
-//送信したユーザー先のユーザーを検索
-    var sheet = SpreadsheetApp.openById(ID).getSheetByName(NAME);
-    var textFinder = sheet.createTextFinder(to);
-    var ranges = textFinder.findAll();
+  // 誕生日が無い場合は早期リターン
+  // if(index === -1) {
+  //   return push('誕生日はありません');
+  // }
 
-    if(ranges[0]){
-        //送信完了時メッセージ（デバック記録用）
-        // debug('送信完了しました。',to);
-    }else{
-        //送信済みメッセージ（デバック記録用）
-        // debug('すでに送信済みです',to);
-    }
+  // const range = sheet.getRange(index, 1);
+  // const value = range.getValue();
 
-    //送信ユーザーを順番待ちから削除
-    // sheet.deleteRows(ranges[0].getRow());
+  // const message = `今日は${value}さんの誕生日です`;
 
-    //メッセージ送信処理
-    return push();
+  //メッセージ送信処理
+  // return push(message);
+  return push(index);
+}
 
+function findUser() {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  const values = sheet.getDataRange().getValues();
+
+  const birthdaysList = [];
+  for(let i = 0; i < values.length; i++) {
+    birthdaysList.push(values[i][1]);
+  }
+
+  const today = new Date();
+  const month = today.getMonth();
+  const date = today.getDate();
+
+  const theDay = `${month + 1}/${date}`;
+
+  const BirthdayIndex = birthdaysList.findIndex(el => {
+    el == theDay;
+  });
+
+  return BirthdayIndex;
 }
 
 //FlexMessageの作成
-function push() {
+function push(message) {
 
     var url = "https://api.line.me/v2/bot/message/push";
     var headers = {
@@ -48,7 +66,7 @@ function push() {
     "to" : to,
     "messages" : [{
       'type' : 'text',
-      'text' : 'HELLO'
+      'text' : message,
     }],
     };
     var options = {

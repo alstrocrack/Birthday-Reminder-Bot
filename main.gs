@@ -4,7 +4,8 @@ const SHEET_ID = '1QR-HT2L1RQenVHeR4y1V9cJm7q18nOQqwSZPtDi3UKY';
 const SHEET_NAME = 'birthdays';
 const SPREAD = SpreadsheetApp.getActiveSpreadsheet();
 const SHEET = SPREAD.getSheets()[0];
-const dateExp = /^1?\d\/[123]\d$/;
+const dateExp = /1?\d\/[123]?\d/;
+const dateExpYear = /[19|20]\d{2}\/1?\d\/[123]?\d/;
 
 //doPost関数（Lineからメッセージを受け取る）
 function doPost(e) {
@@ -16,8 +17,6 @@ function doPost(e) {
   const replyToken= data.replyToken;
   //送信されたメッセージ取得
   const postMsg = data.message.text;
-  //順番待ちがあるかの確認
-  // const UserData = findUser(lineUserId);
 
   // リプライトークンが無かったら処理を止める
   if(typeof replyToken === 'undefined') {
@@ -54,12 +53,12 @@ function doPost(e) {
       case '1':
         cache.put('type', 2);
         cache.put('name', postMsg);
-        reply(replyToken, '追加する誕生日を「12/20」の形式で入力してください');
+        reply(replyToken, '追加する誕生日を「1996/12/20」の形式で入力してください \n 誕生年は無くても構いません');
         break;
       case '2':
-        if(postMsg.match(dateExp)) {
+        if(postMsg.match(dateExp || dateExpYear)) {
           cache.put('date', postMsg);
-          addBirthday(cache.get('name'), cache.get('date'));
+          addBirthday(cache.get('name'), cache.get('date'), lineUserId);
           reply(replyToken, `${cache.get('name')}さんの誕生日を${cache.get('date')}で登録しました`);
           cache.remove('type');
           cache.remove('name');
@@ -87,12 +86,36 @@ function doPost(e) {
 }
 
 // 誕生日の追加
-function addBirthday(name, date) {
+function addBirthday(name, date, lineUserId) {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
-  sheet.appendRow([
-    name, 
-    date,
-  ]);
+  const splitedDate = date.split('/');
+  let year, month, day;
+
+  if(splitedDate.length === 3) {
+    year = splitedDate[0];
+    month = splitedDate[1];
+    day = splitedDate[2];
+
+    sheet.appendRow([
+      name,
+      year,
+      month,
+      day,
+      lineUserId
+    ]);
+  } else {
+    year = '';
+    month = splitedDate[0];
+    day = splitedDate[1];
+
+    sheet.appendRow([
+      name, 
+      year,
+      month,
+      day,
+      lineUserId
+    ]);
+  }
 };
 
 // 誕生日の検索
@@ -130,23 +153,21 @@ function deleteBirthday(rowNumber) {
 function showBirthdaysList() {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
   const values = sheet.getDataRange().getValues();
-
-  // 連想配列から扱いやすい形に変換
-  const dataList = values.map( row => {
-    return {
-      name: row[0],
-      date: row[1]
-    };
-  });
+  const ranges = sheet.getRange(2, 1, values.length - 1, 4).getValues();
 
   // 返信用のフォーマットに変換する
-  const adjustList = dataList.reduce((list, curr) => {
-    return `${list}\n${curr.name} : ${curr.date}`
-  },'');
+  const dataList = ranges.reduce((list, item) => {
+    if(item[1] === '') {
+      return `${list}\n${item[0]} : ${item[2]}月${item[3]}日`;
+    } else {
+      return `${list}\n${item[0]} : ${item[1]}年${item[2]}月${item[3]}日`;
+    }
+  }, '名前 : 誕生日');
 
-  return adjustList;
+  return dataList;
 }
 
+// 返信機能
 function reply(replyToken, message) {
   UrlFetchApp.fetch(URL, {
     'headers': {
