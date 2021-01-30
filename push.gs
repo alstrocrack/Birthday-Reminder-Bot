@@ -1,6 +1,3 @@
-// 送信先のuserID
-var to = "U5a257a207126e910d9b304f2314ea4fc";
-
 //アクセストークン
 var ACCESS_TOKEN = "KjfpEWZUjJfHTMzQMUBmkJ/nIrVFCOCi1NnZKZ4YuOzKGa/IkX/9TK/IyaHEuTDdaJ/zIhyT0kWLvBdHBoGdC/q9azEs6PcaJuPIxYk0YQL1u7vW+dyBd0DFnuf6dnR1KCbIVaXIFKJJcNmmhyjkKQdB04t89/1O/w1cDnyilFU=";
 
@@ -16,10 +13,11 @@ function pushMessage() {
   }
 
   const person = sheet.getRange(index + 1, 1).getValue();
+  const to = sheet.getRange(index + 1, 5).getValue();
   const message = `今日は${person}さんの誕生日です`;
 
   //メッセージ送信処理
-  return push(message);
+  return push(message, to);
 }
 
 function findUser() {
@@ -35,7 +33,7 @@ function findUser() {
   const date = today.getDate();
 
   // 日付に1を足すのはアメリカ時間だからか?
-  const theDay = `${month + 1}/${date + 1}`;
+  const theDay = `${month + 1}/${date}`;
 
   // 記述方法がこれでないと動かないっぽい
   const BirthdayIndex = birthdaysList.findIndex((el) => el == theDay　);
@@ -48,7 +46,7 @@ function findUser() {
 }
 
 //FlexMessageの作成
-function push(message) {
+function push(message, to) {
 
     var url = "https://api.line.me/v2/bot/message/push";
     var headers = {
