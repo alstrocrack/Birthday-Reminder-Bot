@@ -12,9 +12,20 @@ function pushMessage() {
     // return;
   }
 
+  const year = new Date().getFullYear();
+
   const person = sheet.getRange(index + 1, 1).getValue();
   const to = sheet.getRange(index + 1, 5).getValue();
-  const message = `今日は${person}さんの誕生日です`;
+  let theYear = sheet.getRange(index + 1, 2).getValue();
+  let message = "今日は";
+  let age;
+
+  if(theYear) {
+    age = year - theYear;
+    message += `${person}さんの${age}歳の誕生日です`;
+  } else {
+    message += `${person}さんの誕生日です`;
+  }
 
   //メッセージ送信処理
   return push(message, to);
@@ -32,7 +43,6 @@ function findUser() {
   const month = today.getMonth();
   const date = today.getDate();
 
-  // 日付に1を足すのはアメリカ時間だからか?
   const theDay = `${month + 1}/${date}`;
 
   // 記述方法がこれでないと動かないっぽい
