@@ -1,43 +1,62 @@
-/////////////////// 送信先のuserID/////////////////
-////////////（ここで入力したIDに送信されます)//////////
-
-var to = "U5a257a207126e910d9b304f2314ea4fc";
-
-///////////////////////////////////////////////////
-///////////////////////////////////////////////////
-
 //アクセストークン
 var ACCESS_TOKEN = "KjfpEWZUjJfHTMzQMUBmkJ/nIrVFCOCi1NnZKZ4YuOzKGa/IkX/9TK/IyaHEuTDdaJ/zIhyT0kWLvBdHBoGdC/q9azEs6PcaJuPIxYk0YQL1u7vW+dyBd0DFnuf6dnR1KCbIVaXIFKJJcNmmhyjkKQdB04t89/1O/w1cDnyilFU=";
-//スプレッドシート情報
-var ID = '1UvfoXcokXfyeaZIKC8nLTkrTqFeZbS555jIOZWEhKuU';
-var NAME = 'data';
 
 //送信先の処理
 function pushMessage() {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  const index = findUser();
 
-//送信したユーザー先のユーザーを検索
-    var sheet = SpreadsheetApp.openById(ID).getSheetByName(NAME);
-    var textFinder = sheet.createTextFinder(to);
-    var ranges = textFinder.findAll();
+  // 誕生日が無い場合は早期リターン
+  if(index === -1) {
+    return;
+  }
 
-    if(ranges[0]){
-        //送信完了時メッセージ（デバック記録用）
-        // debug('送信完了しました。',to);
-    }else{
-        //送信済みメッセージ（デバック記録用）
-        // debug('すでに送信済みです',to);
-    }
+  const person = sheet.getRange(index + 1, 1).getValue();
+  const to = sheet.getRange(index + 1, 5).getValue();
+  const year = new Date().getFullYear();
+  let theYear = sheet.getRange(index + 1, 2).getValue();
+  let message = "今日は";
+  let age;
 
-    //送信ユーザーを順番待ちから削除
-    // sheet.deleteRows(ranges[0].getRow());
+  if(theYear) {
+    age = year - theYear;
+    message += `${person}さんの${age}歳の誕生日です！`;
+  } else {
+    message += `${person}さんの誕生日です！`;
+  }
 
-    //メッセージ送信処理
-    return push();
-
+  //メッセージ送信処理
+  return push(message, to);
 }
 
-//FlexMessageの作成
-function push() {
+function findUser() {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  const values = sheet.getDataRange().getValues();
+
+  // 比較するときの様式を合わせる
+  const birthdaysList = values.map( row => {
+    return `${row[2]}/${row[3]}`;
+  });
+
+  // 比較するときの様式を合わせる
+  const today = new Date();
+  const month = today.getMonth();
+  const date = today.getDate();
+  const theDay = `${month + 1}/${date}`;
+
+  // 記述方法がこれでないと動かないっぽい
+  const BirthdayIndex = birthdaysList.findIndex((el) => el == theDay　);
+
+  // デバッグ用
+  // const BirthdayIndex = birthdaysList.reduce((accu, curr) => {
+  //   return `${accu}\n${curr}`;
+  // }, theDay);
+
+  return BirthdayIndex;
+}
+
+//PushMessageの作成
+function push(message, to) {
 
     var url = "https://api.line.me/v2/bot/message/push";
     var headers = {
@@ -48,7 +67,10 @@ function push() {
     "to" : to,
     "messages" : [{
       'type' : 'text',
-      'text' : 'HELLO'
+      'text' : "Today is your friend's Birthday!!",
+    },{
+      'type' : 'text',
+      'text' : message,
     }],
     };
     var options = {
