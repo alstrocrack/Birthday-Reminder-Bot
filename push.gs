@@ -8,8 +8,7 @@ function pushMessage() {
 
   // 誕生日が無い場合は早期リターン
   if(index === -1) {
-    return push('誕生日はありません');
-    // return;
+    return;
   }
 
   const person = sheet.getRange(index + 1, 1).getValue();
@@ -21,9 +20,9 @@ function pushMessage() {
 
   if(theYear) {
     age = year - theYear;
-    message += `${person}さんの${age}歳の誕生日です`;
+    message += `${person}さんの${age}歳の誕生日です！`;
   } else {
-    message += `${person}さんの誕生日です`;
+    message += `${person}さんの誕生日です！`;
   }
 
   //メッセージ送信処理
@@ -67,6 +66,9 @@ function push(message, to) {
     var postData = {
     "to" : to,
     "messages" : [{
+      'type' : 'text',
+      'text' : "Today is your friend's Birthday!!",
+    },{
       'type' : 'text',
       'text' : message,
     }],
