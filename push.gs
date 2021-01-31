@@ -39,10 +39,18 @@ function findUser() {
   });
 
   // 比較するときの様式を合わせる
-  const today = new Date();
+  const today = new Date(); 
+  const hour = today.getHours();
   const month = today.getMonth();
   const date = today.getDate();
-  const theDay = `${month + 1}/${date}`;
+  let theDay;
+
+  // アメリカ東部時間が取得されているくさいので時差+14を考慮する
+  if(hour > 14) {
+    theDay = `${month + 1}/${date + 1}`;
+  } else {
+    theDay = `${month + 1}/${date}`;
+  }
 
   // 記述方法がこれでないと動かないっぽい
   const BirthdayIndex = birthdaysList.findIndex((el) => el == theDay　);
