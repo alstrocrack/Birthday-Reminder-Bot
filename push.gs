@@ -46,11 +46,12 @@ function findUser() {
   let theDay;
 
   // アメリカ東部時間が取得されているくさいので時差+14を考慮する
-  if(hour > 14) {
-    theDay = `${month + 1}/${date + 1}`;
-  } else {
-    theDay = `${month + 1}/${date}`;
-  }
+  // if(hour > 14) {
+  //   theDay = `${month + 1}/${date + 1}`;
+  // } else {
+  //   theDay = `${month + 1}/${date}`;
+  // }
+  theDay = `${month + 1}/${date + 1}`;
 
   // 記述方法がこれでないと動かないっぽい
   const BirthdayIndex = birthdaysList.findIndex((el) => el == theDay　);
