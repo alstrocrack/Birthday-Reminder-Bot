@@ -39,9 +39,11 @@ function findUser() {
   });
 
   // 比較するときの様式を合わせる
-  const today = new Date();
+  const today = new Date(); 
+  const hour = today.getHours();
   const month = today.getMonth();
   const date = today.getDate();
+  // timeZoneをAsia/Tokyoに変更
   const theDay = `${month + 1}/${date}`;
 
   // 記述方法がこれでないと動かないっぽい
