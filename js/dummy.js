@@ -6,8 +6,8 @@ const SHEET_NAME = 'birthdays';
 const SPREAD = SpreadsheetApp.getActiveSpreadsheet();
 const SHEET = SPREAD.getSheets()[0];
 // 誕生年があるものとないもの
-const dateExp = /^1?\d\/[123]?\d$/;
-const dateExpYear = /^[19|20]\d{2}\/1?\d\/[123]?\d$/;
+const dateExp = /1?\d\/[123]?\d/;
+const dateExpYear = /[19|20]\d{2}\/1?\d\/[123]?\d/;
 
 //doPost関数（Lineからメッセージを受け取る）
 function doPost(e) {
