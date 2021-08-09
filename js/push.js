@@ -1,5 +1,6 @@
 //アクセストークン
-var ACCESS_TOKEN = "KjfpEWZUjJfHTMzQMUBmkJ/nIrVFCOCi1NnZKZ4YuOzKGa/IkX/9TK/IyaHEuTDdaJ/zIhyT0kWLvBdHBoGdC/q9azEs6PcaJuPIxYk0YQL1u7vW+dyBd0DFnuf6dnR1KCbIVaXIFKJJcNmmhyjkKQdB04t89/1O/w1cDnyilFU=";
+var ACCESS_TOKEN =
+  "KjfpEWZUjJfHTMzQMUBmkJ/nIrVFCOCi1NnZKZ4YuOzKGa/IkX/9TK/IyaHEuTDdaJ/zIhyT0kWLvBdHBoGdC/q9azEs6PcaJuPIxYk0YQL1u7vW+dyBd0DFnuf6dnR1KCbIVaXIFKJJcNmmhyjkKQdB04t89/1O/w1cDnyilFU=";
 
 //送信先の処理
 function pushMessage() {
@@ -7,7 +8,7 @@ function pushMessage() {
   const index = findUser();
 
   // 誕生日が無い場合は早期リターン
-  if(index === -1) {
+  if (index === -1) {
     return;
   }
 
@@ -18,7 +19,7 @@ function pushMessage() {
   let message = "今日は";
   let age;
 
-  if(theYear) {
+  if (theYear) {
     age = year - theYear;
     message += `${person}さんの${age}歳の誕生日です！`;
   } else {
@@ -34,12 +35,12 @@ function findUser() {
   const values = sheet.getDataRange().getValues();
 
   // 比較するときの様式を合わせる
-  const birthdaysList = values.map( row => {
+  const birthdaysList = values.map((row) => {
     return `${row[2]}/${row[3]}`;
   });
 
   // 比較するときの様式を合わせる
-  const today = new Date(); 
+  const today = new Date();
   const hour = today.getHours();
   const month = today.getMonth();
   const date = today.getDate();
@@ -47,7 +48,7 @@ function findUser() {
   const theDay = `${month + 1}/${date}`;
 
   // 記述方法がこれでないと動かないっぽい
-  const BirthdayIndex = birthdaysList.findIndex((el) => el == theDay　);
+  const BirthdayIndex = birthdaysList.findIndex((el) => el == theDay);
 
   // デバッグ用
   // const BirthdayIndex = birthdaysList.reduce((accu, curr) => {
@@ -59,26 +60,28 @@ function findUser() {
 
 //PushMessageの作成
 function push(message, to) {
-
-    var url = "https://api.line.me/v2/bot/message/push";
-    var headers = {
-    "Content-Type" : "application/json; charset=UTF-8",
-    'Authorization': 'Bearer ' + ACCESS_TOKEN,
-    };
-    var postData = {
-    "to" : to,
-    "messages" : [{
-      'type' : 'text',
-      'text' : "Today is your friend's Birthday!!",
-    },{
-      'type' : 'text',
-      'text' : message,
-    }],
-    };
-    var options = {
-    "method" : "post",
-    "headers" : headers,
-    "payload" : JSON.stringify(postData)
-    };
-    return UrlFetchApp.fetch(url, options);
+  var url = "https://api.line.me/v2/bot/message/push";
+  var headers = {
+    "Content-Type": "application/json; charset=UTF-8",
+    Authorization: "Bearer " + ACCESS_TOKEN
+  };
+  var postData = {
+    to: to,
+    messages: [
+      {
+        type: "text",
+        text: "Today is your friend's Birthday!!"
+      },
+      {
+        type: "text",
+        text: message
+      }
+    ]
+  };
+  var options = {
+    method: "post",
+    headers: headers,
+    payload: JSON.stringify(postData)
+  };
+  return UrlFetchApp.fetch(url, options);
 }
