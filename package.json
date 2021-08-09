@@ -1,0 +1,23 @@
+{
+  "name": "Birthday-Reminder-Bot",
+  "version": "1.0.0",
+  "description": "・誕生日の追加、削除、一覧機能  \r ・Push通知機能",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YutoUrushima/Birthday-Reminder-Bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YutoUrushima/Birthday-Reminder-Bot/issues"
+  },
+  "homepage": "https://github.com/YutoUrushima/Birthday-Reminder-Bot#readme",
+  "devDependencies": {
+    "eslint": "^7.32.0"
+  }
+}
