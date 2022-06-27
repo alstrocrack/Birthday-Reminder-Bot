@@ -1,7 +1,3 @@
-//アクセストークン
-var ACCESS_TOKEN =
-  "KjfpEWZUjJfHTMzQMUBmkJ/nIrVFCOCi1NnZKZ4YuOzKGa/IkX/9TK/IyaHEuTDdaJ/zIhyT0kWLvBdHBoGdC/q9azEs6PcaJuPIxYk0YQL1u7vW+dyBd0DFnuf6dnR1KCbIVaXIFKJJcNmmhyjkKQdB04t89/1O/w1cDnyilFU=";
-
 //送信先の処理
 function pushMessage() {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
@@ -60,7 +56,6 @@ function findUser() {
 
 //PushMessageの作成
 function push(message, to) {
-  var url = "https://api.line.me/v2/bot/message/push";
   var headers = {
     "Content-Type": "application/json; charset=UTF-8",
     Authorization: "Bearer " + ACCESS_TOKEN
