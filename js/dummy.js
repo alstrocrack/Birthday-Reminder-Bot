@@ -1,9 +1,4 @@
 // 初期設定
-const CHANNEL_ACCESS_TOKEN =
-  "KjfpEWZUjJfHTMzQMUBmkJ/nIrVFCOCi1NnZKZ4YuOzKGa/IkX/9TK/IyaHEuTDdaJ/zIhyT0kWLvBdHBoGdC/q9azEs6PcaJuPIxYk0YQL1u7vW+dyBd0DFnuf6dnR1KCbIVaXIFKJJcNmmhyjkKQdB04t89/1O/w1cDnyilFU=";
-const URL = "https://api.line.me/v2/bot/message/reply";
-const SHEET_ID = "1QR-HT2L1RQenVHeR4y1V9cJm7q18nOQqwSZPtDi3UKY";
-const SHEET_NAME = "birthdays";
 const SPREAD = SpreadsheetApp.getActiveSpreadsheet();
 const SHEET = SPREAD.getSheets()[0];
 // 誕生年があるものとないもの
