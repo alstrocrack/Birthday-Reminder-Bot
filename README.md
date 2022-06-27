@@ -41,9 +41,6 @@ You can delete the birthday added in "誕生日の削除".
 
 # Note
 
-### Bind spreadsheet<br/>
-https://docs.google.com/spreadsheets/d/1QR-HT2L1RQenVHeR4y1V9cJm7q18nOQqwSZPtDi3UKY/edit#gid=0
-
 ### LINEBOT Icon Image
 <a href="https://pixabay.com/ja/users/herbanu-2323111/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=3148707"> Herbanu Tri Sasongko </a> Image from <a href = "https://pixabay.com/ja/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=3148707"> pixabay </a>
 
